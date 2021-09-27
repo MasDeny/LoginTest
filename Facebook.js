@@ -1,4 +1,4 @@
-import { GraphRequestManager, LoginManager, GraphRequest, AccessToken } from 'react-native-fbsdk-next';
+import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -49,23 +49,23 @@ class FacebookButton extends Component {
     }
   }
 
-  getCurrentUserInfo = (token) => {
-    const userParams = { fields: { string: 'id,name,first_name,last_name,picture,email' } };
-    const userProfileRequest = new GraphRequest(
-      '/me',
-      { token, parameters: userParams },
-      (error, user) => {
-        if (error) {
-          console.error('Handle user infos error: ', error);
-        } else {
-          this.setState({userInfo: user});
-          console.log((user, { fromFacebook: true, facebookToken: token }));
-          console.log(this.state.userInfo);
-        }
-      },
-    );
-    new GraphRequestManager().addRequest(userProfileRequest).start();
-  }
+  // getCurrentUserInfo = (token) => {
+  //   const userParams = { fields: { string: 'id,name,first_name,last_name,picture,email' } };
+  //   const userProfileRequest = new GraphRequest(
+  //     '/me',
+  //     { token, parameters: userParams },
+  //     (error, user) => {
+  //       if (error) {
+  //         console.error('Handle user infos error: ', error);
+  //       } else {
+  //         this.setState({userInfo: user});
+  //         console.log((user, { fromFacebook: true, facebookToken: token }));
+  //         console.log(this.state.userInfo);
+  //       }
+  //     },
+  //   );
+  //   new GraphRequestManager().addRequest(userProfileRequest).start();
+  // }
 
   render() {
     return (
