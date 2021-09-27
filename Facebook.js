@@ -2,6 +2,8 @@ import { GraphRequestManager, LoginManager, GraphRequest, AccessToken } from 're
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DeviceInfo from 'react-native-device-info';
+import axios from 'axios';
 
 class FacebookButton extends Component {
 
@@ -12,15 +14,34 @@ class FacebookButton extends Component {
     };
   }
 
-  signInFB = () => {
+  signInFB = async () => {
     try {
-      let login = LoginManager.logInWithPermissions(['public_profile', 'email']);
+      let login = await LoginManager.logInWithPermissions(['public_profile', 'email']);
       if (login.isCancelled) {
         console.log('Login cancelled');
       } else {
-        AccessToken.getCurrentAccessToken().then(data => {
+        AccessToken.getCurrentAccessToken().then(async (data) => {
           const token = data.accessToken.toString();
-          this.getCurrentUserInfo(token);
+          const ipAddr = await (await axios.get('http://ip-api.com/json/')).data;
+          let device = {
+            'name': await DeviceInfo.getDeviceName(),
+            'brand': await DeviceInfo.getBrand(),
+            'ip': ipAddr.query,
+            'location': ipAddr.city,
+            'timezone': ipAddr.timezone,
+          };
+          axios.post('https://idingar.com/api/v1/auth/facebook/callback', device, {
+            headers: {
+              'Content-Type': 'application/json',
+              'x-facebook-token': token,
+            },
+          })
+            .then((response) => {
+              console.log(response.data);
+            }, (error) => {
+              console.log(error);
+            });
+          // this.getCurrentUserInfo(token);
         });
       }
     } catch (error) {
